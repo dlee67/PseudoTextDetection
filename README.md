@@ -1,0 +1,2 @@
+# PseudoTextDetection
+by using ARCore
