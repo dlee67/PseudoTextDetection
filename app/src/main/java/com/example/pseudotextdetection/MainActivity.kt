@@ -33,7 +33,8 @@ class MainActivity : AppCompatActivity() {
 
         frame?.let { // This is something specific to Kotlin.
             // https://developers.google.com/ar/reference/c/group/augmented-image
-            val updatedAugmentedImages = it.getUpdatedTrackables(AugmentedImage::class.java)
+            // https://developers.google.com/ar/reference/java/arcore/reference/com/google/ar/core/Frame#getUpdatedTrackables(java.lang.Class%3CT%3E)
+            val updatedAugmentedImages = it.getUpdatedTrackables(AugmentedImage::class.java) // Whatever trackable that is an augmented image ...
             updatedAugmentedImages.forEach { augmentedImage ->
                 when (augmentedImage.trackingState) {
                     // https://developers.google.com/ar/reference/java/arcore/reference/com/google/ar/core/TrackingState
@@ -43,8 +44,8 @@ class MainActivity : AppCompatActivity() {
                     }
                     TrackingState.TRACKING -> { // When finding the image that needs to be tracked.
                         if (!augmentedImageMap.containsKey(augmentedImage)) {
-                            val node = AugmentedImageNode(this)
-                            node.setImageToNode(augmentedImage) // Actually attach the renderable here.
+                            val node = AugmentedImageNode(this, arFragment)
+                            node.setImageToNode(augmentedImage) // Attaches the renderable here.
                             augmentedImageMap.put(augmentedImage, node)
                             arFragment.arSceneView.scene.addChild(node)
                         }

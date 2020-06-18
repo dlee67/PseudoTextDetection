@@ -13,6 +13,7 @@ import com.google.ar.core.Session
 import com.google.ar.sceneform.ux.ArFragment
 import java.io.IOException
 
+// It's easier to think of ArFragment as the scene itself.
 class AugmentedImageFragment : ArFragment() {
 
     override fun onCreateView(

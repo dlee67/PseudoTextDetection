@@ -9,17 +9,20 @@ import com.google.ar.core.AugmentedImage
 import com.google.ar.core.Pose
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
+import com.google.ar.sceneform.ux.TransformableNode
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.DpToMetersViewSizer
 import com.google.ar.sceneform.rendering.ViewRenderable
+import com.google.ar.sceneform.ux.ArFragment
+import com.google.ar.sceneform.ux.TransformationSystem
 import java.util.concurrent.CompletableFuture
 
 // https://developers.google.com/sceneform/reference/com/google/ar/sceneform/AnchorNode
 // This is what's allowing the ar objects to be trackable.
 // To me, Node is something that encapsulates a renderable,
 // which contains things like anchor (https://developers.google.com/ar/reference/java/arcore/reference/com/google/ar/core/Anchor)
-class AugmentedImageNode(context: Context) : AnchorNode() {
+class AugmentedImageNode(context: Context, arFragment: ArFragment) : AnchorNode() {
 
     private val gifViewLoader: CompletableFuture<ViewRenderable> = ViewRenderable
         .builder()
@@ -28,6 +31,7 @@ class AugmentedImageNode(context: Context) : AnchorNode() {
         .build()
     private var gifView: ViewRenderable? = null
     private lateinit var image: AugmentedImage
+    private lateinit var transformationSystem: TransformationSystem
 
     init {
         gifViewLoader.thenAccept { viewRenderable ->
@@ -36,6 +40,7 @@ class AugmentedImageNode(context: Context) : AnchorNode() {
                 gifView = viewRenderable // AR object that can be used in the scene.
             }
         }
+        transformationSystem = arFragment.transformationSystem
     }
 
     fun setImageToNode(image: AugmentedImage) {
@@ -67,13 +72,13 @@ class AugmentedImageNode(context: Context) : AnchorNode() {
 
         Log.d("dhl", "extentX ${image.extentX}, extentZ ${image.extentZ}")
 
-        val pose = Pose.makeTranslation(0.0f, 0.0f, 0.0f)
-        val localPosition = Vector3(pose.tx(), pose.ty(), pose.tz())
-        val centerNode = Node() // Looks like this doesn't do anything?
+         val pose = Pose.makeTranslation(0.0f, 0.0f, 0.0f)
+         val localPosition = Vector3(pose.tx(), pose.ty(), pose.tz())
+        val centerNode = TransformableNode(transformationSystem) // Looks like this doesn't do anything?
         centerNode.setParent(this) // Notice how centerNode is not being assigned to any identifier; rather, I am assigning a parent to it.
         // In ARCore, that's how we assign AR objects to scene.
         centerNode.localPosition = localPosition
-        centerNode.localRotation = Quaternion(pose.qx(), 90f, -90f, pose.qw())
+        centerNode.localRotation = Quaternion(pose.qx(), 90f, -90f, pose.qw()) // This will rotate the gif so that it fit the picture that the app is tracking.
         centerNode.renderable = gifView
 
         // https://developers.google.com/sceneform/reference/com/google/ar/sceneform/rendering/ViewRenderable#getView()
