@@ -58,6 +58,14 @@ class AugmentedImageFragment : ArFragment() {
                 val bitmap = BitmapFactory.decodeStream(inputStream)
                 imageDatabase.addImage("tofu_soup", bitmap, 0.12f)
             }
+            requireContext().assets.open("cpp-alliance.png").use { inputStream ->
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                imageDatabase.addImage("cpp-alliance", bitmap, 0.12f)
+            }
+            requireContext().assets.open("huge-cardboard.png").use { inputStream ->
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                imageDatabase.addImage("huge-cardboard", bitmap, 0.12f)
+            }
             config.augmentedImageDatabase = imageDatabase
             true
         } catch (e: IOException) {

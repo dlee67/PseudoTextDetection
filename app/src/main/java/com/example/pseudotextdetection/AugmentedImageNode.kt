@@ -19,8 +19,9 @@ import com.google.ar.sceneform.ux.TransformationSystem
 import java.util.concurrent.CompletableFuture
 
 // https://developers.google.com/sceneform/reference/com/google/ar/sceneform/AnchorNode
+// https://developers.google.com/sceneform/reference/com/google/ar/sceneform/Node
 // This is what's allowing the ar objects to be trackable.
-// To me, Node is something that encapsulates a renderable,
+// To me, Node is something that encapsulates and abstracts a renderable,
 // which contains things like anchor (https://developers.google.com/ar/reference/java/arcore/reference/com/google/ar/core/Anchor)
 class AugmentedImageNode(context: Context, arFragment: ArFragment) : AnchorNode() {
 
@@ -72,8 +73,11 @@ class AugmentedImageNode(context: Context, arFragment: ArFragment) : AnchorNode(
 
         Log.d("dhl", "extentX ${image.extentX}, extentZ ${image.extentZ}")
 
-         val pose = Pose.makeTranslation(0.0f, 0.0f, 0.0f)
-         val localPosition = Vector3(pose.tx(), pose.ty(), pose.tz())
+        val pose = Pose.makeTranslation(0.0f, 0.0f, 0.0f)
+        val localPosition = Vector3(pose.tx(), pose.ty(), pose.tz())
+        // https://developers.google.com/sceneform/reference/com/google/ar/sceneform/ux/TransformationSystem
+        // https://developers.google.com/sceneform/reference/com/google/ar/sceneform/ux/TransformableNode#getTranslationController()
+        // Transform is an umbrella term for the XYZ interactions; like, rotation, translation, and scale.
         val centerNode = TransformableNode(transformationSystem) // Looks like this doesn't do anything?
         centerNode.setParent(this) // Notice how centerNode is not being assigned to any identifier; rather, I am assigning a parent to it.
         // In ARCore, that's how we assign AR objects to scene.
@@ -88,6 +92,8 @@ class AugmentedImageNode(context: Context, arFragment: ArFragment) : AnchorNode(
 
             val imageUri = when (image.name) {
                 "tofu_soup" -> Uri.parse("https://media1.giphy.com/media/3ohuAbHlxHTLowDaV2/giphy.gif?cid=ecf05e47fad5086acac0ed0871aeaf9bc867a96d552df629&rid=giphy.gif")
+                "cpp-alliance" -> Uri.parse("https://art.pixilart.com/0d92ea76c0f540a.gif")
+                "huge-cardboard" -> Uri.parse("https://i.giphy.com/media/lsAVei7DRrPIt3C5KC/giphy.gif")
                 else -> null
             }
 
